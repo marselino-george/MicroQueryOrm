@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
 using System.Linq;
-using System.Reflection;
+using System.Threading.Tasks;
 
 namespace MicroQueryOrm.SqlServer
 {
@@ -11,27 +11,41 @@ namespace MicroQueryOrm.SqlServer
     {
         /// <summary>
         /// Converts all the rows of the DataTable to a collection of arbitrary objects.
-        /// In order for the mapping to work, the properties of the TDestination class must have the ColumnAttribute attribute.
         /// </summary>
         public static IEnumerable<TDestination> Map<TDestination>(this DataTable table) where TDestination : class, new()
         {
-            //var result = new List<TDestination>();
-            //foreach (DataRow row in table.Rows)
-            //{
-            //    var f = Map<TDestination>(row);
-            //    result.Add(f);
-            //}
-            //return result;
             return from DataRow row in table.Rows select Map<TDestination>(row);
         }
 
         /// <summary>
+        /// Converts all the rows of the DataTable to a collection of arbitrary objects.
+        /// This is the async version of the Map method.
+        /// </summary>
+        /// <typeparam name="TDestination"></typeparam>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        public static async Task<IEnumerable<TDestination>> MapAsync<TDestination>(this Task<DataTable> table) where TDestination : class, new()
+        {
+            return Map<TDestination>(await table);
+        }
+
+        /// <summary>
         /// Converts the DataRow to an arbitrary object.
-        /// In order for the mapping to work, the properties of the TDestination class must have the ColumnAttribute attribute.
         /// </summary>
         public static TDestination Map<TDestination>(this DataRow row) where TDestination : class, new()
         {
             return DataRowMapper<TDestination>.Map(row);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TDestination"></typeparam>
+        /// <param name="enumerableTask"></param>
+        /// <returns></returns>
+        public static async Task<List<TDestination>> ToListAsync<TDestination>(this Task<IEnumerable<TDestination>> enumerableTask) where TDestination : class, new()
+        {
+            return (await enumerableTask).ToList();
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using System.Data;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using MicroQueryOrm.Common;
+using System.Threading.Tasks;
 
 namespace MicroQueryOrm.SqlServer
 {
@@ -152,6 +153,50 @@ namespace MicroQueryOrm.SqlServer
                     connection.Close();
                 }
             }
+        }
+
+
+
+        /// <summary>
+        /// This method returns a DataTable with the data of the query.
+        /// </summary>
+        /// <param name="queryStr"></param>
+        /// <param name="commandType"></param>
+        /// <param name="parameters"></param>
+        /// <param name="transaction"></param>
+        /// <param name="timeoutSecs"></param>
+        /// <returns></returns>
+        public async Task<DataTable> QueryAsync(string queryStr,
+            CommandType commandType = CommandType.StoredProcedure,
+            IDataParameter[]? parameters = null,
+            SqlTransaction? transaction = null,
+            int timeoutSecs = 30)
+        {
+            var table = new DataTable();
+            using var connection = new SqlConnection(DbConfig.ConnectionString);
+            try
+            {
+                if (transaction == null)
+                {
+                    await connection.OpenAsync();
+                }
+                var cmd = SqlCmd(connection, queryStr, commandType, parameters, timeoutSecs);
+                using var dataAdapter = new SqlDataAdapter(cmd);
+                dataAdapter.Fill(table);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            finally
+            {
+                if (transaction == null)
+                {
+                    await connection.CloseAsync();
+                }
+            }
+
+            return table;
         }
 
         /// <summary>
