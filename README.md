@@ -1,5 +1,5 @@
 # MicroQueryOrm
-Simplified Ado NET queries on Sql Server databases
+Simplified Ado NET queries for Sql Server databases.
 
 ## Usage
 
