@@ -158,7 +158,7 @@ namespace MicroQueryOrm.SqlServer
 
 
         /// <summary>
-        /// This method returns a DataTable with the data of the query.
+        /// This is the async method to execute a query and return a DataTable
         /// </summary>
         /// <param name="queryStr"></param>
         /// <param name="commandType"></param>
@@ -184,7 +184,7 @@ namespace MicroQueryOrm.SqlServer
                 using var dataAdapter = new SqlDataAdapter(cmd);
                 dataAdapter.Fill(table);
             }
-            catch (Exception ex)
+            catch
             {
                 throw;
             }
