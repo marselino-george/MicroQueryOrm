@@ -18,7 +18,7 @@
     <RepositoryUrl>https://github.com/marselino-george/MicroQueryOrm</RepositoryUrl>
     <PackAsTool>False</PackAsTool>
     <EnableNETAnalyzers>False</EnableNETAnalyzers>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

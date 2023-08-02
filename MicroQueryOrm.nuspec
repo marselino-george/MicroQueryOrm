@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>MicroQueryOrm</id>
+    <version>1.1.1</version>
+    <authors>Marselino-Georgios Romero</authors>
+	<description>Simplified Ado NET queries for Sql Server databases</description>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <icon>logo.png</icon>
+    <projectUrl>https://github.com/marselino-george/MicroQueryOrm</projectUrl>
+	<repository type="git" url="https://github.com/marselino-george/MicroQueryOrm" />
+	<readme>README.md</readme>
+    <tags>ADO.NET SQLServer Database ORM MicroORM DataAccess Query Dapper DbConnection StoredProcedure DataMapping SQL DotNet MicroQuery DataLayer DbQuery DataModel</tags>
+    <dependencies>
+      <group targetFramework="netstandard2.1">
+        <dependency id="Microsoft.Data.SqlClient" version="5.1.1" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\publish\MicroQueryOrm.SqlServer.dll" target="lib\netstandard2.1" />
+    <file src="logo.png" target="" />
+    <file src="README.md" target="" />
+    <file src="..\publish\MicroQueryOrm.Common.dll" target="lib\netstandard2.1" />
+  </files>
+</package>
