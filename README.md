@@ -4,6 +4,23 @@ Simplified Ado NET queries for Sql Server databases.
 ## Usage
 
 ```
+public class DataBaseConfiguration : IDataBaseConfiguration
+{
+	public string ConnectionStringName { get; set; }
+
+	public string ConnectionString { get; set; }
+
+	public int CommandTimeout { get; set; }
+}
+
+DataBaseConfiguration dbConfig = new()
+	{
+		ConnectionString = "<your_connection_string>",
+		CommandTimeout = 30,
+		ConnectionStringName = "Default"
+	};
+	
+	var microQuery = new MicroQuery(dbConfig);
 List<Product> result = microQuery.Query(@"
 SELECT TOP (10)
 [Id]
