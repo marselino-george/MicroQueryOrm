@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>MicroQueryOrm</id>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
     <authors>Marselino-Georgios Romero</authors>
 	<description>Simplified Ado NET queries for Sql databases</description>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
