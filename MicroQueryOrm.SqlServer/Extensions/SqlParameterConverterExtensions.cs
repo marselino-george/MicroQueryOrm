@@ -8,46 +8,46 @@ using static MicroQueryOrm.Common.Extensions.ReflectionExtensions;
 namespace MicroQueryOrm.SqlServer.Extensions
 {
     /// <summary>
-    /// Contains methods to create or modify IDataParameter[].
+    /// Contains methods to create or modify IDbDataParameter[].
     /// </summary>
     public static class SqlParameterConverterExtensions
     {
-        public static IDataParameter[] AddSqlParameter(this IDataParameter[] dataParameters, string name, object value)
+        public static IDbDataParameter[] AddSqlParameter(this IDbDataParameter[] dataParameters, string name, object value)
         {
-            var dataParams = new IDataParameter[dataParameters.Length + 1];
+            var dataParams = new IDbDataParameter[dataParameters.Length + 1];
             dataParameters.CopyTo(dataParams, 0);
             dataParams[dataParameters.Length] = new SqlParameter(name, value);
             return dataParams;
         }
 
-        public static IDataParameter[] ExtendParameter<T>(this IDataParameter[] dataParameters, string name, Action<T> modifyAction) where T : class, new()
+        public static IDbDataParameter[] ExtendParameter<T>(this IDbDataParameter[] dataParameters, string name, Action<T> modifyAction) where T : class, new()
         {
             var p = (T)dataParameters.SingleOrDefault(param => param.ParameterName == name);
             modifyAction(p);
             return dataParameters;
         }
 
-        public static IDataParameter[] RemoveParameter(this IDataParameter[] dataParameters, string name)
+        public static IDbDataParameter[] RemoveParameter(this IDbDataParameter[] dataParameters, string name)
         {
             var newParameters = dataParameters.Where(parameter => parameter.ParameterName != name).ToArray();
             return newParameters;
         }
 
-        public static IDataParameter[] RemoveParameter(this IDataParameter[] dataParameters, string[] names)
+        public static IDbDataParameter[] RemoveParameter(this IDbDataParameter[] dataParameters, string[] names)
         {
             var newParameters = dataParameters.Where(parameter => !names.Contains(parameter.ParameterName)).ToArray();
             return newParameters;
         }
 
         /// <summary>
-        /// Converts all the properties of the object to a collection of IDataParameter.
+        /// Converts all the properties of the object to a collection of IDbDataParameter.
         /// </summary>
         /// <example>
         /// The following Anonymous Object:
         /// var param = new { p_name = "George", p_lastname = "Romero" }.ToSqlParams();
         /// 
         /// It's equivalent to:
-        /// var param = new IDataParameter[]
+        /// var param = new IDbDataParameter[]
         /// {
         ///     new SqlParameter
         ///     {
@@ -61,15 +61,15 @@ namespace MicroQueryOrm.SqlServer.Extensions
         ///     }
         /// };
         /// </example>
-        /// <param name="container">Object to convert to IDataParameter[]</param>
+        /// <param name="container">Object to convert to IDbDataParameter[]</param>
         /// <returns></returns>
-        public static IDataParameter[] ToSqlParams(this object container)
+        public static IDbDataParameter[] ToSqlParams(this object container)
         {
             return ToSqlParams<object>(container);
         }
 
         /// <summary>
-        /// Converts all the properties of a class (T) to a collection of IDataParameter.
+        /// Converts all the properties of a class (T) to a collection of IDbDataParameter.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="container"></param>
