@@ -12,7 +12,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{82C30900-77D3-4840-980A-A5C5A9E7F0FE}"
 	ProjectSection(SolutionItems) = preProject
 		Assets\logo.png = Assets\logo.png
-		MicroQueryOrm.SqlServer\Assets\microqueryorm.ico = MicroQueryOrm.SqlServer\Assets\microqueryorm.ico
+		Assets\microqueryorm.ico = Assets\microqueryorm.ico
 	EndProjectSection
 EndProject
 Global

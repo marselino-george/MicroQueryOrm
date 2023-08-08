@@ -2,9 +2,9 @@
 <package >
   <metadata>
     <id>MicroQueryOrm</id>
-    <version>1.1.1</version>
+    <version>2.0.1</version>
     <authors>Marselino-Georgios Romero</authors>
-	<description>Simplified Ado NET queries for Sql Server databases</description>
+	<description>Simplified Ado NET queries for Sql databases</description>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <icon>logo.png</icon>
@@ -20,7 +20,7 @@
   </metadata>
   <files>
     <file src="..\publish\MicroQueryOrm.SqlServer.dll" target="lib\netstandard2.1" />
-    <file src="logo.png" target="" />
+    <file src=".\Assets\logo.png" target="" />
     <file src="README.md" target="" />
     <file src="..\publish\MicroQueryOrm.Common.dll" target="lib\netstandard2.1" />
   </files>
