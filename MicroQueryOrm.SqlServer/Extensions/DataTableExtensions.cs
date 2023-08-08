@@ -4,9 +4,13 @@ using System.Data;
 using System.Linq.Expressions;
 using System.Linq;
 using System.Threading.Tasks;
+using MicroQueryOrm.Common.Extensions;
 
-namespace MicroQueryOrm.SqlServer
+namespace MicroQueryOrm.SqlServer.Extensions
 {
+    /// <summary>
+    /// Contains methods that help Map a DataTable to a collection of arbitrary objects.
+    /// </summary>
     public static class DataTableExtensions
     {
         /// <summary>
@@ -14,7 +18,7 @@ namespace MicroQueryOrm.SqlServer
         /// </summary>
         public static IEnumerable<TDestination> Map<TDestination>(this DataTable table) where TDestination : class, new()
         {
-            return from DataRow row in table.Rows select Map<TDestination>(row);
+            return from DataRow row in table.Rows select row.Map<TDestination>();
         }
 
         /// <summary>
@@ -26,7 +30,7 @@ namespace MicroQueryOrm.SqlServer
         /// <returns></returns>
         public static async Task<IEnumerable<TDestination>> MapAsync<TDestination>(this Task<DataTable> table) where TDestination : class, new()
         {
-            return Map<TDestination>(await table);
+            return (await table).Map<TDestination>();
         }
 
         /// <summary>

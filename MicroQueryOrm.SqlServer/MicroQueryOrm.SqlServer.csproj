@@ -3,14 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <ApplicationIcon>microqueryorm.ico</ApplicationIcon>
+    <ApplicationIcon>..\Assets\microqueryorm.ico</ApplicationIcon>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <SignAssembly>False</SignAssembly>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>MicroQueryOrm</PackageId>
     <Title>Micro Query ORM</Title>
     <Authors>Marselino-Georgios Romero</Authors>
-    <Description>Simplified Ado NET queries for Sql Server databases</Description>
+    <Description>Simplified Ado NET queries for Sql databases</Description>
     <PackageIcon>logo.png</PackageIcon>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -18,15 +18,13 @@
     <RepositoryUrl>https://github.com/marselino-george/MicroQueryOrm</RepositoryUrl>
     <PackAsTool>False</PackAsTool>
     <EnableNETAnalyzers>False</EnableNETAnalyzers>
-    <Version>1.1.1</Version>
+    <Version>2.0.0</Version>
+    <UserSecretsId>0f16c716-e1ac-4da5-bc09-4fda3b961d36</UserSecretsId>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="microqueryorm.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\logo.png">
+    <None Include="..\Assets\logo.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

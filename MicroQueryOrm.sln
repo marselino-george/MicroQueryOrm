@@ -3,11 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroQueryOrm.SqlServer", "MicroQueryOrm.SqlServer\MicroQueryOrm.SqlServer.csproj", "{339F85AF-3853-4322-BCE3-CD2A88492D95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroQueryOrm.SqlServer", "MicroQueryOrm.SqlServer\MicroQueryOrm.SqlServer.csproj", "{339F85AF-3853-4322-BCE3-CD2A88492D95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroQueryOrm.Common", "MicroQueryOrm.Common\MicroQueryOrm.Common.csproj", "{0FC4C2C9-ABD9-4486-8F4C-7661D4726919}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroQueryOrm.Common", "MicroQueryOrm.Common\MicroQueryOrm.Common.csproj", "{0FC4C2C9-ABD9-4486-8F4C-7661D4726919}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroQueryOrm.Tests", "MicroQueryOrm.Tests\MicroQueryOrm.Tests.csproj", "{989C754B-6E14-4BA0-A380-8F6CB6DBF4B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroQueryOrm.Tests", "MicroQueryOrm.Tests\MicroQueryOrm.Tests.csproj", "{989C754B-6E14-4BA0-A380-8F6CB6DBF4B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{82C30900-77D3-4840-980A-A5C5A9E7F0FE}"
+	ProjectSection(SolutionItems) = preProject
+		Assets\logo.png = Assets\logo.png
+		MicroQueryOrm.SqlServer\Assets\microqueryorm.ico = MicroQueryOrm.SqlServer\Assets\microqueryorm.ico
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

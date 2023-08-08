@@ -1,18 +1,18 @@
 # MicroQueryOrm
-Simplified Ado NET queries for Sql Server databases.
+Simplified Ado NET queries for Sql databases.
+
+- For now it is compatible only with Sql Server Databases.
 
 ## Usage
 
+Include the following namespaces:
 ```
-public class DataBaseConfiguration : IDataBaseConfiguration
-{
-	public string ConnectionStringName { get; set; }
+using MicroQueryOrm.Common;
+using MicroQueryOrm.SqlServer;
+```
 
-	public string ConnectionString { get; set; }
-
-	public int CommandTimeout { get; set; }
-}
-
+### Basic Query:
+```
 DataBaseConfiguration dbConfig = new()
 	{
 		ConnectionString = "<your_connection_string>",
@@ -20,25 +20,24 @@ DataBaseConfiguration dbConfig = new()
 		ConnectionStringName = "Default"
 	};
 	
-	var microQuery = new MicroQuery(dbConfig);
-List<Product> result = microQuery.Query(@"
-SELECT TOP (10)
-[Id]
-,[ImageUrl]
-,[Category]
-,[Title]
-,[Rating]
-,[ReviewsCount]
-,[Price]
-,[ShopName]
-,[CreatedAt]
-,[RemoteId]
-FROM [dbo].[Products]
-", commandType: System.Data.CommandType.Text)
-                .Map<Product>()
-                .ToList();
+	List<Product> result = await microQuery.QueryAsync(@"
+            SELECT TOP (10)
+            [Id]
+            ,[ImageUrl]
+            ,[Category]
+            ,[Title]
+            ,[Rating]
+            ,[ReviewsCount]
+            ,[Price]
+            ,[ShopName]
+            ,[CreatedAt]
+            ,[RemoteId]
+            FROM [dbo].[Products]
+            ", System.Data.CommandType.Text)
+            .MapAsync<Product>()
+            .ToListAsync();
 ```
-
+#### Test Model:
 ```
 public class Product
 {
@@ -70,5 +69,61 @@ public class Product
 
     [Column("RemoteId")]
     public long RemoteId { get; set; }
+}
+```
+
+### "Execute" Method:
+```
+var inventoryParams = (new Inventory
+{
+	WarehouseId = "1",
+	CategoryId = "11",
+	CategoryDesc = "Category Desc 1",
+	Sku = "12345",
+	ProductDesc = $"Product 12345",
+	Price = 100,
+	Quantity = 2,
+	TotalPrice = 200,
+	Updated = DateTime.UtcNow
+})
+.ToSqlParams(); // Automatically converts to SqlParameters
+
+microQuery.Execute(@"
+INSERT INTO [dbo].[Inventory]
+([WarehouseId]
+,[CategoryId]
+,[CategoryDesc]
+,[Sku]
+,[ProductDesc]
+,[Price]
+,[Quantity]
+,[TotalPrice]
+,[Updated])
+VALUES
+(
+	@WarehouseId,
+	@CategoryId,
+	@CategoryDesc,
+	@Sku,
+	@ProductDesc,
+	@Price,
+	@Quantity,
+	@TotalPrice,
+	@Updated
+)", inventoryParams, System.Data.CommandType.Text);
+```
+#### Test Model:
+```
+public class Inventory
+{
+    public string WarehouseId { get; set; }
+    public string CategoryId { get; set; }
+    public string CategoryDesc { get; set; }
+    public string Sku { get; set; }
+    public string ProductDesc { get; set; }
+    public decimal? Price { get; set; }
+    public decimal? Quantity { get; set; }
+    public decimal? TotalPrice { get; set; }
+    public DateTime Updated { get; set; }
 }
 ```

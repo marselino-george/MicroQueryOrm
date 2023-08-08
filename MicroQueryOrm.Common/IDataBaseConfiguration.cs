@@ -1,5 +1,4 @@
-﻿
-namespace MicroQueryOrm.Common
+﻿namespace MicroQueryOrm.Common
 {
     public interface IDataBaseConfiguration
     {
