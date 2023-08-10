@@ -1,5 +1,5 @@
 ﻿
-namespace MicroQueryOrm.Tests.TestModels
+namespace MicroQueryOrm.SqlServer.Tests.TestModels
 {
     public class Inventory
     {

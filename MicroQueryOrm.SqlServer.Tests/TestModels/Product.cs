@@ -1,6 +1,6 @@
 ﻿using MicroQueryOrm.SqlServer;
 
-namespace MicroQueryOrm.Tests.TestModels
+namespace MicroQueryOrm.SqlServer.Tests.TestModels
 {
     public class Product
     {

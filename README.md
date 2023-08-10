@@ -11,36 +11,45 @@ using MicroQueryOrm.Common;
 using MicroQueryOrm.SqlServer;
 ```
 
-### Basic Query:
+Additional namespaces for helper methods:
+```
+using MicroQueryOrm.Common.Extensions;
+using MicroQueryOrm.SqlServer.Extensions;
+```
+
+### Basic query example:
 ```
 DataBaseConfiguration dbConfig = new()
-	{
-		ConnectionString = "<your_connection_string>",
-		CommandTimeout = 30,
-		ConnectionStringName = "Default"
-	};
-	
-	List<Product> result = await microQuery.QueryAsync(@"
-            SELECT TOP (10)
-            [Id]
-            ,[ImageUrl]
-            ,[Category]
-            ,[Title]
-            ,[Rating]
-            ,[ReviewsCount]
-            ,[Price]
-            ,[ShopName]
-            ,[CreatedAt]
-            ,[RemoteId]
-            FROM [dbo].[Products]
-            ", System.Data.CommandType.Text)
-            .MapAsync<Product>()
-            .ToListAsync();
+{
+	ConnectionString = "<your_connection_string>",
+	CommandTimeout = 30,
+	ConnectionStringName = "Default"
+};
+
+var microQuery = new MicroQuery(dbConfig);
+List<Product> result = await microQuery.QueryAsync<Product>(
+    """
+    SELECT TOP (10)
+    [Id]
+    ,[ImageUrl]
+    ,[Category]
+    ,[Title]
+    ,[Rating]
+    ,[ReviewsCount]
+    ,[Price]
+    ,[ShopName]
+    ,[CreatedAt]
+    ,[RemoteId]
+    FROM [dbo].[Products]
+    """
+)
+.ToListAsync();
 ```
 #### Test Model:
 ```
 public class Product
 {
+    // With or without [Column("Id")] attribute
     public Guid Id { get; set; }
 
     [Column("ImageUrl")]
@@ -72,23 +81,24 @@ public class Product
 }
 ```
 
-### "Execute" Method:
+### "Execute" methods example:
+For executing queries or StoredProcedures that do not return data, use the "Execute" methods.
+
 ```
-var inventoryParams = (new Inventory
+var inventoryParams = new Inventory
 {
 	WarehouseId = "1",
 	CategoryId = "11",
 	CategoryDesc = "Category Desc 1",
 	Sku = "12345",
 	ProductDesc = $"Product 12345",
-	Price = 100,
-	Quantity = 2,
-	TotalPrice = 200,
+	Price = 100m,
+	Quantity = 2m,
+	TotalPrice = 200m,
 	Updated = DateTime.UtcNow
-})
-.ToSqlParams(); // Automatically converts to SqlParameters
+};
 
-microQuery.Execute(@"
+await microQuery.ExecuteAsync(@"
 INSERT INTO [dbo].[Inventory]
 ([WarehouseId]
 ,[CategoryId]
@@ -110,8 +120,31 @@ VALUES
 	@Quantity,
 	@TotalPrice,
 	@Updated
-)", inventoryParams, System.Data.CommandType.Text);
+)", inventoryParams);
 ```
+or with Stored Procedure:
+```
+await microQuery.ExecuteAsync("sp_InsertInventory", inventoryParams, CommandType.StoredProcedure);
+```
+
+### "StoredProcedure" methods example:
+StoredProcedure methods are used to execute Stored Procedures that return data.
+```
+IDbDataParameter[] sqlParams = (new { Sku = inventoryParams.Sku }).ToSqlParams();
+IEnumerable<Inventory> data = microQuery.StoredProcedure<Inventory>("sp_GetInventoryBySku", sqlParams);
+```
+
+### "SingleResult" methods example:
+"SingleResult" methods are used to execute queries that return a single result.
+```
+decimal result = await microQuery.SingleResultAsync<decimal>(@"
+    SELECT TOP (1)
+    [Price]
+    FROM [dbo].[Inventory]
+");
+```
+
+
 #### Test Model:
 ```
 public class Inventory

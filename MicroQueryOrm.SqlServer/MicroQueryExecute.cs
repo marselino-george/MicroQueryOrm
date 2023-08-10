@@ -1,52 +1,50 @@
 ﻿using System.Data;
-using System;
-using Microsoft.Data.SqlClient;
 using MicroQueryOrm.Common;
+using MicroQueryOrm.SqlServer.Extensions;
 
 namespace MicroQueryOrm.SqlServer
 {
     public partial class MicroQuery : IMicroQueryExecute
     {
-        public void Execute(string queryStr, CommandType commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null, Action<Exception>? onError = null)
+        /// <summary>
+        /// Executes a text query such as Insert, Update, Delete without parameters that wont get any results back.
+        /// </summary>
+        /// <param name="queryStr"></param>
+        /// <param name="commandType"></param>
+        /// <param name="transaction"></param>
+        /// <param name="timeoutSecs"></param>
+        public void Execute(string queryStr, CommandType commandType = CommandType.Text, IDbTransaction? transaction = null, int? timeoutSecs = null)
         {
-            _Execute(queryStr, commandType, transaction: transaction, onError: onError);
+            _Execute(queryStr, commandType: commandType, transaction: transaction, timeoutSecs: timeoutSecs);
         }
 
-        public void Execute(string queryStr, IDbDataParameter[] parameters, CommandType commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null, Action<Exception>? onError = null, int timeoutSecs = 30)
+        /// <summary>
+        /// Executes a text query such as Insert, Update, Delete with IDbDataParameter[] parameters that wont get any results back.
+        /// </summary>
+        /// <param name="queryStr"></param>
+        /// <param name="parameters"></param>
+        /// <param name="commandType"></param>
+        /// <param name="transaction"></param>
+        /// <param name="timeoutSecs"></param>
+        public void Execute(string queryStr, IDbDataParameter[] parameters, CommandType commandType = CommandType.Text, IDbTransaction? transaction = null, int? timeoutSecs = null)
         {
-            _Execute(queryStr, commandType, parameters, transaction, onError, timeoutSecs);
+            _Execute(queryStr, parameters, commandType, transaction, timeoutSecs);
         }
-        private void _Execute(string queryStr, CommandType commandType = CommandType.StoredProcedure, IDbDataParameter[]? parameters = null, IDbTransaction? transaction = null, Action<Exception>? onError = null, int timeoutSecs = 30)
+
+        /// <summary>
+        /// Executes a text query such as Insert, Update, Delete with parameters as a class object of TParams that wont get any results back.
+        /// </summary>
+        /// <typeparam name="TParams"></typeparam>
+        /// <param name="queryStr"></param>
+        /// <param name="parameters"></param>
+        /// <param name="commandType"></param>
+        /// <param name="transaction"></param>
+        /// <param name="timeoutSecs"></param>
+        public void Execute<TParams>(string queryStr, TParams parameters, CommandType commandType = CommandType.Text, IDbTransaction? transaction = null, int? timeoutSecs = null)
+            where TParams : class, new()
         {
-            SqlTransaction? sqlTransaction = null;
-            if (transaction != null)
-            {
-                sqlTransaction = transaction as SqlTransaction;
-            }
-
-            using var connection = sqlTransaction?.Connection ?? new SqlConnection(DbConfig.ConnectionString);
-            try
-            {
-                if (sqlTransaction == null)
-                {
-                    connection.Open();
-                }
-
-                var cmd = SqlCmd(connection, sqlTransaction, queryStr, commandType, parameters, timeoutSecs);
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception exception)
-            {
-                onError?.Invoke(exception);
-                if (onError == null) throw;
-            }
-            finally
-            {
-                if (transaction == null)
-                {
-                    connection.Close();
-                }
-            }
+            IDbDataParameter[] dbParams = parameters.ToSqlParams<TParams>();
+            _Execute(queryStr, dbParams, commandType, transaction, timeoutSecs);
         }
     }
 }

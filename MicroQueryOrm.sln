@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroQueryOrm.SqlServer", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroQueryOrm.Common", "MicroQueryOrm.Common\MicroQueryOrm.Common.csproj", "{0FC4C2C9-ABD9-4486-8F4C-7661D4726919}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroQueryOrm.Tests", "MicroQueryOrm.Tests\MicroQueryOrm.Tests.csproj", "{989C754B-6E14-4BA0-A380-8F6CB6DBF4B5}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{82C30900-77D3-4840-980A-A5C5A9E7F0FE}"
 	ProjectSection(SolutionItems) = preProject
 		Assets\logo.png = Assets\logo.png
 		Assets\microqueryorm.ico = Assets\microqueryorm.ico
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroQueryOrm.SqlServer.Tests", "MicroQueryOrm.SqlServer.Tests\MicroQueryOrm.SqlServer.Tests.csproj", "{68897AAF-EE9E-4A9F-991E-41FDA13AB184}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{0FC4C2C9-ABD9-4486-8F4C-7661D4726919}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FC4C2C9-ABD9-4486-8F4C-7661D4726919}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FC4C2C9-ABD9-4486-8F4C-7661D4726919}.Release|Any CPU.Build.0 = Release|Any CPU
-		{989C754B-6E14-4BA0-A380-8F6CB6DBF4B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{989C754B-6E14-4BA0-A380-8F6CB6DBF4B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{989C754B-6E14-4BA0-A380-8F6CB6DBF4B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{989C754B-6E14-4BA0-A380-8F6CB6DBF4B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68897AAF-EE9E-4A9F-991E-41FDA13AB184}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68897AAF-EE9E-4A9F-991E-41FDA13AB184}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68897AAF-EE9E-4A9F-991E-41FDA13AB184}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68897AAF-EE9E-4A9F-991E-41FDA13AB184}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

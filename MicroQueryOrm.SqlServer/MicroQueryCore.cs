@@ -2,47 +2,40 @@
 using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using MicroQueryOrm.Common.Extensions;
 
 namespace MicroQueryOrm.SqlServer
 {
+    /// <summary>
+    /// MicroQueryCore: Contains all the core methods that connect to the Database.
+    /// </summary>
     public partial class MicroQuery
     {
         /// <summary>
-        /// This method does not return anything but you can add an Action to have direct access when you get the data row by row.
+        /// This method accepts an Action to return the results as SqlDataReader. This way gives direct access to the data row by row.
         /// </summary>
         /// <param name="queryStr">Query or Name of Stored Procedure</param>
         /// <param name="readerAction">Action in order to have direct access when you get the data row by row.</param>
-        /// <param name="commandType">Stored Procedure or Transact-SQL statement. The default is CommandType.StoredProcedure.</param>
         /// <param name="parameters"></param>
+        /// <param name="commandType">Stored Procedure or Transact-SQL statement. The default is CommandType.StoredProcedure.</param>
         /// <param name="transaction"></param>
         /// <param name="timeoutSecs">Time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <returns></returns>
         private void _Query(string queryStr,
-            Action<SqlDataReader> readerAction,
-            CommandType commandType = CommandType.StoredProcedure,
+            Action<IDataReader> readerAction,
             IDbDataParameter[]? parameters = null,
+            CommandType commandType = CommandType.StoredProcedure,
             IDbTransaction? transaction = null,
-            int timeoutSecs = 30)
+            int? timeoutSecs = null)
         {
-            SqlTransaction? sqlTransaction = null;
-            if (transaction != null)
-            {
-                sqlTransaction = transaction as SqlTransaction;
-            }
-
-            using var connection = sqlTransaction?.Connection ?? new SqlConnection(DbConfig.ConnectionString);
+            var (sqlConnection, sqlTransaction) = GetSqlConnectionTransaction(transaction);
             try
             {
-                if (sqlTransaction == null)
+                using var cmd = SqlCmd(sqlConnection, sqlTransaction, queryStr, commandType, parameters, timeoutSecs);
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    connection.Open();
-                }
-
-                using var cmd = SqlCmd(connection, sqlTransaction, queryStr, commandType, parameters, timeoutSecs);
-                using var rdr = cmd.ExecuteReader();
-                while (rdr.Read())
-                {
-                    readerAction(rdr);
+                    readerAction(reader);
                 }
             }
             catch
@@ -53,7 +46,44 @@ namespace MicroQueryOrm.SqlServer
             {
                 if (sqlTransaction == null)
                 {
-                    connection.Close();
+                    sqlConnection.Close();
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Returns a DataTable
+        /// </summary>
+        /// <param name="queryStr">Query or Name of Stored Procedure</param>
+        /// <param name="parameters"></param>
+        /// <param name="commandType">Stored Procedure or Transact-SQL statement. The default is CommandType.StoredProcedure.</param>
+        /// <param name="transaction"></param>
+        /// <param name="timeoutSecs">Time in seconds to wait for the command to execute. The default is 30 seconds.</param>
+        /// <returns></returns>
+        private DataTable _Query(string queryStr,
+            IDbDataParameter[]? parameters = null,
+            CommandType commandType = CommandType.StoredProcedure,
+            IDbTransaction? transaction = null,
+            int? timeoutSecs = null)
+        {
+            var (sqlConnection, sqlTransaction) = GetSqlConnectionTransaction(transaction);
+            try
+            {
+                using var cmd = SqlCmd(sqlConnection, sqlTransaction, queryStr, commandType, parameters, timeoutSecs);
+                using var reader = cmd.ExecuteReader();
+                var table = new DataTable();
+                table.Load(reader);
+                return table;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (sqlTransaction == null)
+                {
+                    sqlConnection.Close();
                 }
             }
         }
@@ -62,16 +92,137 @@ namespace MicroQueryOrm.SqlServer
         /// This is the async method to execute a query and return a DataTable
         /// </summary>
         /// <param name="queryStr"></param>
-        /// <param name="commandType"></param>
         /// <param name="parameters"></param>
+        /// <param name="commandType"></param>
         /// <param name="transaction"></param>
         /// <param name="timeoutSecs"></param>
         /// <returns></returns>
-        public async Task<DataTable> QueryAsync(string queryStr,
+        private async Task<DataTable> _QueryAsync(string queryStr,
+            IDbDataParameter[]? parameters = null,
             CommandType commandType = CommandType.StoredProcedure,
+            IDbTransaction? transaction = null,
+            int? timeoutSecs = null)
+        {
+            var (sqlConnection, sqlTransaction) = await GetSqlConnectionTransactionAsync(transaction);
+            try
+            {
+                using var cmd = SqlCmd(sqlConnection, sqlTransaction, queryStr, commandType, parameters, timeoutSecs);
+                using var reader = await cmd.ExecuteReaderAsync();
+                var table = new DataTable();
+                table.Load(reader);
+                return table;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (sqlTransaction == null)
+                {
+                    await sqlConnection.CloseAsync();
+                }
+            }
+        }
+
+        private void _Execute(string queryStr, IDbDataParameter[]? parameters = null, CommandType commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null, int? timeoutSecs = null)
+        {
+            var (sqlConnection, sqlTransaction) = GetSqlConnectionTransaction(transaction);
+
+            try
+            {
+                using var cmd = SqlCmd(sqlConnection, sqlTransaction, queryStr, commandType, parameters, timeoutSecs);
+                cmd.ExecuteNonQuery();
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (sqlTransaction == null)
+                {
+                    sqlConnection.Close();
+                }
+            }
+        }
+
+        private async Task _ExecuteAsync(string queryStr, IDbDataParameter[]? parameters = null, CommandType commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null, int? timeoutSecs = null)
+        {
+            var (sqlConnection, sqlTransaction) = await GetSqlConnectionTransactionAsync(transaction);
+            try
+            {
+                using var cmd = SqlCmd(sqlConnection, sqlTransaction, queryStr, commandType, parameters, timeoutSecs);
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (sqlTransaction == null)
+                {
+                    await sqlConnection.CloseAsync();
+                }
+            }
+        }
+
+        private TDestination _SingleResult<TDestination>(string queryStr,
             IDbDataParameter[]? parameters = null,
             IDbTransaction? transaction = null,
-            int timeoutSecs = 30)
+            int? timeoutSecs = null)
+        {
+            var (sqlConnection, sqlTransaction) = GetSqlConnectionTransaction(transaction);
+            try
+            {
+                using var cmd = SqlCmd(sqlConnection, sqlTransaction, queryStr, CommandType.Text, parameters, timeoutSecs);
+                var scalarResult = cmd.ExecuteScalar();
+                if (scalarResult == DBNull.Value || scalarResult == null) return default(TDestination);
+                var result = scalarResult.ChangeType<TDestination>();
+                return result;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (sqlTransaction == null)
+                {
+                    sqlConnection.Close();
+                }
+            }
+        }
+
+        private async Task<TDestination> _SingleResultAsync<TDestination>(string queryStr,
+            IDbDataParameter[]? parameters = null,
+            IDbTransaction? transaction = null,
+            int? timeoutSecs = null)
+        {
+            var (sqlConnection, sqlTransaction) = await GetSqlConnectionTransactionAsync(transaction);
+            try
+            {
+                using var cmd = SqlCmd(sqlConnection, sqlTransaction, queryStr, CommandType.Text, parameters, timeoutSecs);
+                var scalarResult = await cmd.ExecuteScalarAsync();
+                if (scalarResult == DBNull.Value || scalarResult == null) return default(TDestination);
+                var result = scalarResult.ChangeType<TDestination>();
+                return result;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (sqlTransaction == null)
+                {
+                    await sqlConnection.CloseAsync();
+                }
+            }
+        }
+
+        private (SqlConnection, SqlTransaction?) GetSqlConnectionTransaction(IDbTransaction? transaction = null)
         {
             SqlTransaction? sqlTransaction = null;
             if (transaction != null)
@@ -79,83 +230,33 @@ namespace MicroQueryOrm.SqlServer
                 sqlTransaction = transaction as SqlTransaction;
             }
 
-            var table = new DataTable();
-            using var connection = new SqlConnection(DbConfig.ConnectionString);
-            try
+            SqlConnection connection = sqlTransaction?.Connection ?? new SqlConnection(DbConfig.ConnectionString);
+            if (sqlTransaction == null)
             {
-                if (sqlTransaction == null)
-                {
-                    await connection.OpenAsync();
-                }
-                using var cmd = SqlCmd(connection, queryStr, commandType, parameters, timeoutSecs);
-                using var dataAdapter = new SqlDataAdapter(cmd);
-                dataAdapter.Fill(table);
+                connection.Open();
             }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                if (sqlTransaction == null)
-                {
-                    await connection.CloseAsync();
-                }
-            }
-
-            return table;
+            return (connection!, sqlTransaction);
         }
 
-        /// <summary>
-        /// Returns a DataTable
-        /// </summary>
-        /// <param name="queryStr">Query or Name of Stored Procedure</param>
-        /// <param name="commandType">Stored Procedure or Transact-SQL statement. The default is CommandType.StoredProcedure.</param>
-        /// <param name="parameters"></param>
-        /// <param name="timeoutSecs">Time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-        /// <returns></returns>
-        private DataTable _Query(string queryStr,
-            CommandType commandType = CommandType.StoredProcedure,
-            IDbDataParameter[]? parameters = null,
-            IDbTransaction? transaction = null,
-            int timeoutSecs = 30)
+        private async Task<(SqlConnection, SqlTransaction?)> GetSqlConnectionTransactionAsync(IDbTransaction? transaction = null)
         {
-            var table = new DataTable();
-            using var connection = new SqlConnection(DbConfig.ConnectionString);
-            try
+            SqlTransaction? sqlTransaction = null;
+            if (transaction != null)
             {
-                if (transaction == null)
-                {
-                    connection.Open();
-                }
-                using var cmd = SqlCmd(connection, queryStr, commandType, parameters, timeoutSecs);
-                using var dataAdapter = new SqlDataAdapter(cmd);
-                dataAdapter.Fill(table);
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                if (transaction == null)
-                {
-                    connection.Close();
-                }
+                sqlTransaction = transaction as SqlTransaction;
             }
 
-            return table;
+            SqlConnection connection = sqlTransaction?.Connection ?? new SqlConnection(DbConfig.ConnectionString);
+            if (sqlTransaction == null)
+            {
+                await connection.OpenAsync();
+            }
+            return (connection!, sqlTransaction);
         }
 
-        public static SqlCommand SqlCmd(SqlConnection connection, string queryStr,
-            CommandType commandType = CommandType.StoredProcedure, IDbDataParameter[]? parameters = null,
-            int timeoutSecs = 30)
+        private SqlCommand SqlCmd(SqlConnection connection, IDbTransaction? transaction, string queryStr, CommandType commandType = CommandType.StoredProcedure, IDbDataParameter[]? parameters = null, int? timeoutSecs = null)
         {
-            return SqlCmd(connection, null, queryStr, commandType, parameters, timeoutSecs);
-        }
-
-        public static SqlCommand SqlCmd(SqlConnection connection, IDbTransaction? transaction, string queryStr, CommandType commandType = CommandType.StoredProcedure, IDbDataParameter[]? parameters = null, int timeoutSecs = 30)
-        {
+            int newTimeoutSecs = timeoutSecs ?? DbConfig.CommandTimeout;
             SqlTransaction? sqlTransaction = null;
             if (transaction != null)
             {
@@ -165,11 +266,11 @@ namespace MicroQueryOrm.SqlServer
             var cmd = sqlTransaction == null ? new SqlCommand(queryStr, connection)
             {
                 CommandType = commandType,
-                CommandTimeout = timeoutSecs
+                CommandTimeout = newTimeoutSecs
             } : new SqlCommand(queryStr, connection, sqlTransaction)
             {
                 CommandType = commandType,
-                CommandTimeout = timeoutSecs
+                CommandTimeout = newTimeoutSecs
             };
 
             if (parameters == null) return cmd;

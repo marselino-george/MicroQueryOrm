@@ -2,18 +2,20 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Threading.Tasks;
 
 namespace MicroQueryOrm.Common
 {
     public interface IMicroQuery
     {
-        DataTable Query(string queryStr, CommandType commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null);
-        void Query(string queryStr, Action<IDataReader> readerAction, CommandType commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null);
-        DataTable Query(string queryStr, IDbDataParameter[] parameters, CommandType commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null);
-        void Query(string queryStr, IDbDataParameter[] parameters, Action<IDataReader> readerAction, CommandType commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null);
-        IEnumerable<T> Query<T>(string queryStr, CommandType commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null) where T : class, new();
-        IEnumerable<T> Query<T>(string queryStr, IDbDataParameter[] parameters, CommandType commandType = CommandType.StoredProcedure, IDbTransaction? transaction = null) where T : class, new();
-        Task<DataTable> QueryAsync(string queryStr, CommandType commandType = CommandType.StoredProcedure, IDbDataParameter[]? parameters = null, IDbTransaction? transaction = null, int timeoutSecs = 30);
+        DataTable Query(string queryStr, IDbTransaction? transaction = null, int? timeoutSecs = null);
+        void Query(string queryStr, Action<IDataReader> readerAction, IDbTransaction? transaction = null, int? timeoutSecs = null);
+        DataTable Query(string queryStr, IDbDataParameter[] parameters, IDbTransaction? transaction = null, int? timeoutSecs = null);
+        void Query(string queryStr, IDbDataParameter[] parameters, Action<IDataReader> readerAction, IDbTransaction? transaction = null, int? timeoutSecs = null);
+        IEnumerable<TDestination> Query<TDestination>(string queryStr, IDbTransaction? transaction = null, int? timeoutSecs = null) where TDestination : class, new();
+        IEnumerable<TDestination> Query<TDestination>(string queryStr, IDbDataParameter[] parameters, IDbTransaction? transaction = null, int? timeoutSecs = null) where TDestination : class, new();
+        DataTable Query<TParams>(string queryStr, TParams parameters, IDbTransaction? transaction = null, int? timeoutSecs = null) where TParams : class, new();
+        IEnumerable<TDestination> Query<TParams, TDestination>(string queryStr, TParams parameters, IDbTransaction? transaction = null, int? timeoutSecs = null)
+            where TParams : class, new()
+            where TDestination : class, new();
     }
 }
