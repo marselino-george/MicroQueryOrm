@@ -1,5 +1,5 @@
 ﻿using MicroQueryOrm.SqlServer.Tests.TestModels;
-using MicroQueryOrm.SqlServer.Extensions;
+using MicroQueryOrm.Core.Extensions;
 using FluentAssertions;
 using Xunit;
 

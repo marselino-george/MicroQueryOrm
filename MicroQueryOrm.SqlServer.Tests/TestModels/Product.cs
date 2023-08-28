@@ -1,4 +1,4 @@
-﻿using MicroQueryOrm.SqlServer;
+﻿using MicroQueryOrm.Core.Attributes;
 
 namespace MicroQueryOrm.SqlServer.Tests.TestModels
 {

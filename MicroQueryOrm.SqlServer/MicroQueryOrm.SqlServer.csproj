@@ -41,6 +41,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MicroQueryOrm.Common\MicroQueryOrm.Common.csproj" />
+    <ProjectReference Include="..\MicroQueryOrm.Core\MicroQueryOrm.Core.csproj" />
   </ItemGroup>
 
 </Project>

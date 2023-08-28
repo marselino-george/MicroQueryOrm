@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using NSubstitute;
 using MicroQueryOrm.Common;
+using MicroQueryOrm.Core;
 using MicroQueryOrm.SqlServer.Tests.TestModels;
 
 namespace MicroQueryOrm.SqlServer.Tests
@@ -25,8 +26,8 @@ namespace MicroQueryOrm.SqlServer.Tests
             _dbConfigSubstitute = Substitute.For<IDataBaseConfiguration>();
             _dbConfigSubstitute.ConnectionString.Returns(_connectionString);
             _dbConfigSubstitute.CommandTimeout.Returns(30);
-
-            _microQuery = new MicroQuery(_dbConfigSubstitute);
+            var sqlServerStrategy = new SqlServerStrategy(_dbConfigSubstitute);
+            _microQuery = new MicroQuery(sqlServerStrategy);
         }
 
         protected static Inventory InventoryParameters()

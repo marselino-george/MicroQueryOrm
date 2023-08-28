@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MicroQueryOrm.SqlServer
+namespace MicroQueryOrm.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class IgnoreAttribute : Attribute

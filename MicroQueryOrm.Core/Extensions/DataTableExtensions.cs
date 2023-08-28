@@ -5,8 +5,9 @@ using System.Linq.Expressions;
 using System.Linq;
 using System.Threading.Tasks;
 using MicroQueryOrm.Common.Extensions;
+using MicroQueryOrm.Core.Attributes;
 
-namespace MicroQueryOrm.SqlServer.Extensions
+namespace MicroQueryOrm.Core.Extensions
 {
     /// <summary>
     /// Contains methods that help Map a DataTable to a collection of arbitrary objects.

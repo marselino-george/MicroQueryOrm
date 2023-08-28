@@ -3,39 +3,16 @@ using System.Data;
 using System.Threading.Tasks;
 using MicroQueryOrm.Common;
 using MicroQueryOrm.SqlServer.Extensions;
+using MicroQueryOrm.Core.Extensions;
+using MicroQueryOrm.Core;
 
 namespace MicroQueryOrm.SqlServer
 {
     /// <summary>
     /// MicroQueryAsync: Contains all the async methods to execute text queries.
     /// </summary>
-    public partial class MicroQuery : IMicroQueryAsync
+    public partial class MicroQuery : AbstractMicroQuery, IMicroQueryAsync
     {
-        /// <summary>
-        /// Executes a text query asynchronously without parameters and returns the result as a DataTable.
-        /// </summary>
-        /// <param name="queryStr"></param>
-        /// <param name="transaction"></param>
-        /// <param name="timeoutSecs"></param>
-        /// <returns></returns>
-        public async Task<DataTable> QueryAsync(string queryStr, IDbTransaction? transaction = null, int? timeoutSecs = null)
-        {
-            return await _QueryAsync(queryStr, parameters: null, CommandType.Text, transaction, timeoutSecs);
-        }
-
-        /// <summary>
-        /// Executes a text query asynchronously accepting parameters as IDbDataParameter[] and returns the result as a DataTable.
-        /// </summary>
-        /// <param name="queryStr"></param>
-        /// <param name="parameters"></param>
-        /// <param name="transaction"></param>
-        /// <param name="timeoutSecs"></param>
-        /// <returns></returns>
-        public async Task<DataTable> QueryAsync(string queryStr, IDbDataParameter[] parameters, IDbTransaction? transaction = null, int? timeoutSecs = null)
-        {
-            return await _QueryAsync(queryStr, parameters, CommandType.Text, transaction, timeoutSecs);
-        }
-
         /// <summary>
         /// Executes a text query asynchronously accepting parameters as a class object of TParams and returns the result as a DataTable.
         /// </summary>
@@ -45,8 +22,8 @@ namespace MicroQueryOrm.SqlServer
         /// <param name="transaction"></param>
         /// <param name="timeoutSecs"></param>
         /// <returns></returns>
-        public async Task<DataTable> QueryAsync<TParams>(string queryStr, TParams parameters, IDbTransaction? transaction = null, int? timeoutSecs = null)
-            where TParams : class, new()
+        public override async Task<DataTable> QueryAsync<TParams>(string queryStr, TParams parameters, IDbTransaction? transaction = null, int? timeoutSecs = null)
+            //where TParams : class, new()
         {
             IDbDataParameter[] dbParams = parameters.ToSqlParams<TParams>();
             return await _QueryAsync(queryStr, dbParams, CommandType.Text, transaction, timeoutSecs);
@@ -77,9 +54,9 @@ namespace MicroQueryOrm.SqlServer
         /// <param name="transaction"></param>
         /// <param name="timeoutSecs"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<TDestination>> QueryAsync<TParams, TDestination>(string queryStr, TParams parameters, IDbTransaction? transaction = null, int? timeoutSecs = null)
-            where TParams : class, new()
-            where TDestination : class, new()
+        public override async Task<IEnumerable<TDestination>> QueryAsync<TParams, TDestination>(string queryStr, TParams parameters, IDbTransaction? transaction = null, int? timeoutSecs = null)
+            //where TParams : class, new()
+            //where TDestination : class, new()
         {
             IDbDataParameter[] dbParams = parameters.ToSqlParams<TParams>();
             var dataTable = _QueryAsync(queryStr, dbParams, CommandType.Text, transaction, timeoutSecs);
