@@ -1,7 +1,7 @@
-﻿using MicroQueryOrm.SqlServer.Tests.TestModels;
-using MicroQueryOrm.Core.Extensions;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Xunit;
+using MicroQueryOrm.Core.Extensions;
+using MicroQueryOrm.SqlServer.Tests.TestModels;
 
 namespace MicroQueryOrm.SqlServer.Tests
 {

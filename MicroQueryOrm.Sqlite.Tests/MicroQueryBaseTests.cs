@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using NSubstitute;
 using MicroQueryOrm.Common;
-using MicroQueryOrm.SqlServer.Tests.TestModels;
+using MicroQueryOrm.SqlLite;
+using MicroQueryOrm.Sqlite.Tests.TestModels;
 
-namespace MicroQueryOrm.SqlServer.Tests
+
+namespace MicroQueryOrm.Sqlite.Tests
 {
     public abstract class MicroQueryBaseTests
     {
@@ -25,7 +27,7 @@ namespace MicroQueryOrm.SqlServer.Tests
             _dbConfigSubstitute = Substitute.For<IDataBaseConfiguration>();
             _dbConfigSubstitute.ConnectionString.Returns(_connectionString);
             _dbConfigSubstitute.CommandTimeout.Returns(30);
-            var sqlServerStrategy = new SqlServerStrategy(_dbConfigSubstitute);
+            var sqlServerStrategy = new SqliteStrategy(_dbConfigSubstitute);
             _microQuery = new MicroQuery(sqlServerStrategy);
         }
 

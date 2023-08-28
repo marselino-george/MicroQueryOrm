@@ -4,6 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>59de8cfd-ed51-4aeb-901d-5d741aac8bac</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MicroQueryOrm.Common\MicroQueryOrm.Common.csproj" />
+    <ProjectReference Include="..\MicroQueryOrm.Core\MicroQueryOrm.Core.csproj" />
+    <ProjectReference Include="..\MicroQueryOrm.Sqlite\MicroQueryOrm.Sqlite.csproj" />
   </ItemGroup>
 
 </Project>
